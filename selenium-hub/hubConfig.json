@@ -1,0 +1,6 @@
+{
+  "servlets": [
+    "io.sterodium.extensions.hub.proxy.HubRequestsProxyingServlet"
+  ],
+  "capabilityMatcher": "io.sterodium.extensions.capability.CustomCapabilityMatcher"
+}

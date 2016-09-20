@@ -21,7 +21,8 @@ echo "INFO: JAVA_OPTS are '${JAVA_OPTS}'"
 # TODO: how to set default firefox to latest?
 export FIREFOX_BROWSER_CAPS="browserName=firefox,${COMMON_CAPS},version=${FIREFOX_VERSION},firefox_binary=${FIREFOX_DEST_BIN}"
 java ${JAVA_OPTS} \
-  -jar ${SEL_HOME}/selenium-server-standalone.jar \
+  -cp "${SEL_HOME}/selenium-server-standalone.jar:${SEL_HOME}/all-node-extensions.jar" "org.openqa.grid.selenium.GridLauncher" \
+  -nodeConfig "${SEL_HOME}/firefoxNodeConfig.json" \
   -port ${SELENIUM_NODE_FF_PORT} \
   -host ${SELENIUM_NODE_HOST} \
   -role node \

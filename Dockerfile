@@ -736,10 +736,17 @@ USER ${NORMAL_USER}
 ENV SEL_MAJOR_MINOR_VER 2.53
 ENV SEL_PATCH_LEVEL_VER 1
 RUN  mkdir -p ${SEL_HOME} \
+  && export SELEXT_PATH="http://search.maven.org/remotecontent?filepath=io/sterodium/extension-proxy/0.6/extension-proxy-0.6.jar" \
+  && export SELNODE_PATH="http://repo1.maven.org/maven2/io/sterodium/all-node-extensions/0.6/all-node-extensions-0.6.jar" \
   && export SELBASE="https://selenium-release.storage.googleapis.com" \
   && export SELPATH="${SEL_MAJOR_MINOR_VER}/selenium-server-standalone-${SEL_MAJOR_MINOR_VER}.${SEL_PATCH_LEVEL_VER}.jar" \
   && wget -nv ${SELBASE}/${SELPATH} \
-      -O ${SEL_HOME}/selenium-server-standalone.jar
+      -O ${SEL_HOME}/selenium-server-standalone.jar \
+  && wget -nv ${SELEXT_PATH} \
+      -O ${SEL_HOME}/extension-proxy.jar \
+  && wget -nv ${SELNODE_PATH} \
+      -O ${SEL_HOME}/all-node-extensions.jar
+
 
 #==================
 # Chrome webdriver
@@ -917,6 +924,7 @@ COPY ./dns/etc/hosts /tmp/hosts
 ENV DEFAULT_SELENIUM_HUB_PORT="24444" \
     DEFAULT_SELENIUM_NODE_CH_PORT="25550" \
     DEFAULT_SELENIUM_NODE_FF_PORT="25551" \
+    DEFAULT_SELENIUM_NODE_SD_PORT="25552" \
     DEFAULT_VNC_PORT="25900" \
     DEFAULT_NOVNC_PORT="26080" \
     DEFAULT_SSHD_PORT="22222" \
@@ -971,6 +979,7 @@ ENV FIREFOX_VERSION="${FF_VER}" \
   SELENIUM_NODE_HOST="127.0.0.1" \
   SELENIUM_NODE_CH_PORT="${DEFAULT_SELENIUM_NODE_CH_PORT}" \
   SELENIUM_NODE_FF_PORT="${DEFAULT_SELENIUM_NODE_FF_PORT}" \
+  SELENIUM_NODE_SD_PORT="${DEFAULT_SELENIUM_NODE_SD_PORT}" \
   # Selenium additional params:
   SELENIUM_HUB_PARAMS="" \
   SELENIUM_NODE_PARAMS="" \
@@ -1070,6 +1079,7 @@ ENV FIREFOX_VERSION="${FF_VER}" \
   GRID="true" \
   CHROME="true" \
   FIREFOX="true" \
+  STERODIUM="true" \
   # Video file and extension, e.g. swf, mp4, mkv, flv
   VIDEO_FILE_EXTENSION="mkv" \
   VIDEO_FILE_NAME="" \
@@ -1112,6 +1122,7 @@ ENV FIREFOX_VERSION="${FF_VER}" \
   XTERM_STOP_SIGNAL="INT" \
   SELENIUM_NODE_FIREFOX_STOP_SIGNAL="TERM" \
   SELENIUM_NODE_CHROME_STOP_SIGNAL="TERM" \
+  SELENIUM_NODE_STERODIUM_STOP_SIGNAL="TERM" \
   SELENIUM_HUB_STOP_SIGNAL="TERM" \
   VNC_STOP_SIGNAL="TERM" \
   NOVNC_STOP_SIGNAL="TERM" \
@@ -1155,6 +1166,10 @@ ADD test/* /test/
 ADD test/run_test.sh /usr/bin/run_test
 ADD test/selenium_test.sh /usr/bin/selenium_test
 ADD test/python_test.py /usr/bin/python_test
+ADD selenium-hub/hubConfig.json ${SEL_HOME}/
+ADD selenium-node-chrome/nodeConfig.json ${SEL_HOME}/chromeNodeConfig.json
+ADD selenium-node-firefox/nodeConfig.json ${SEL_HOME}/firefoxNodeConfig.json
+ADD selenium-node-sterodium/nodeConfig.json ${SEL_HOME}/sterodiumNodeConfig.json
 
 #===================================
 # Fix dirs (again) and final chores

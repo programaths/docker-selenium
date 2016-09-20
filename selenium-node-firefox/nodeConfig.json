@@ -1,0 +1,10 @@
+{
+  "capabilities": [
+    {
+      "extension.sikuliCapability": true
+    }
+  ],
+  "configuration": {
+    "servlets": "io.sterodium.extensions.node.SikuliExtensionServlet,io.sterodium.extensions.node.upload.FileUploadServlet,io.sterodium.extensions.node.download.FileDownloadServlet"
+  }
+}

@@ -18,7 +18,8 @@ echo "INFO: JAVA_OPTS are '${JAVA_OPTS}'"
 # Had to increase -cleanUpCycle and -nodePolling to avoid
 #  UnknownError: Session [.*] was terminated due to TIMEOUT
 java ${JAVA_OPTS} \
-  -jar ${SEL_HOME}/selenium-server-standalone.jar \
+  -cp "${SEL_HOME}/selenium-server-standalone.jar:${SEL_HOME}/extension-proxy.jar" "org.openqa.grid.selenium.GridLauncher" \
+  -hubConfig ${SEL_HOME}/hubConfig.json \
   -port ${SELENIUM_HUB_PORT} \
   -role hub \
   -maxSession ${MAX_SESSIONS} \

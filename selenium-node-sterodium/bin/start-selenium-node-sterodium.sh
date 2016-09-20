@@ -18,15 +18,15 @@ echo "INFO: JAVA_OPTS are '${JAVA_OPTS}'"
 #  https://github.com/pilwon/selenium-webdriver/blob/master/java/server/src/org/openqa/grid/common/defaults/GridParameters.properties
 # See node defaults at
 #  https://github.com/pilwon/selenium-webdriver/blob/master/java/server/src/org/openqa/grid/common/defaults/DefaultNode.json
-export CHROME_BROWSER_CAPS="browserName=chrome,${COMMON_CAPS},version=${CHROME_VERSION},chrome_binary=${CHROME_PATH}"
+# TODO: how to set default firefox to latest?
 java ${JAVA_OPTS} \
   -cp "${SEL_HOME}/selenium-server-standalone.jar:${SEL_HOME}/all-node-extensions.jar" "org.openqa.grid.selenium.GridLauncher" \
-  -nodeConfig "${SEL_HOME}/chromeNodeConfig.json" \
-  -port ${SELENIUM_NODE_CH_PORT} \
+  -nodeConfig "${SEL_HOME}/sterodiumNodeConfig.json" \
+  -port ${SELENIUM_NODE_SD_PORT} \
   -host ${SELENIUM_NODE_HOST} \
   -role node \
   -hub "${SELENIUM_HUB_PROTO}://${SELENIUM_HUB_HOST}:${SELENIUM_HUB_PORT}/grid/register" \
-  -browser "${CHROME_BROWSER_CAPS}" \
+  -browser "${FIREFOX_BROWSER_CAPS}" \
   -trustAllSSLCertificates \
   -maxSession ${MAX_SESSIONS} \
   -timeout ${SEL_RELEASE_TIMEOUT_SECS} \
@@ -34,7 +34,6 @@ java ${JAVA_OPTS} \
   -cleanUpCycle ${SEL_CLEANUPCYCLE_MS} \
   -nodePolling ${SEL_NODEPOLLING_MS} \
   -unregisterIfStillDownAfter ${SEL_UNREGISTER_IF_STILL_DOWN_AFTER} \
-  -Dwebdriver.chrome.driver="${SEL_HOME}/chromedriver" \
   ${SELENIUM_NODE_PARAMS} \
   ${CUSTOM_SELENIUM_NODE_PROXY_PARAMS} \
   ${CUSTOM_SELENIUM_NODE_REGISTER_CYCLE} \
@@ -42,12 +41,12 @@ java ${JAVA_OPTS} \
 NODE_PID=$!
 
 function shutdown {
-  echo "-- INFO: Shutting down Chrome NODE gracefully..."
+  echo "-- INFO: Shutting down Firefox NODE gracefully..."
   kill -SIGINT ${NODE_PID} || true
   kill -SIGTERM ${NODE_PID} || true
   kill -SIGKILL ${NODE_PID} || true
   wait ${NODE_PID}
-  echo "-- INFO: Chrome node shutdown complete."
+  echo "-- INFO: Firefox node shutdown complete."
   # First stop video recording because it needs some time to flush it
   supervisorctl -c /etc/supervisor/supervisord.conf stop video-rec || true
   killall supervisord
@@ -55,7 +54,7 @@ function shutdown {
 }
 
 function trappedFn {
-  echo "-- INFO: Trapped SIGTERM/SIGINT on Chrome NODE"
+  echo "-- INFO: Trapped SIGTERM/SIGINT on Firefox NODE"
   shutdown
 }
 # Run function shutdown() when this process a killer signal
@@ -63,7 +62,7 @@ trap trappedFn SIGTERM SIGINT SIGKILL
 
 # tells bash to wait until child processes have exited
 wait ${NODE_PID}
-echo "-- INFO: Passed after wait java Chrome node"
+echo "-- INFO: Passed after wait java Firefox node"
 
 # Always shutdown if the node dies
 shutdown

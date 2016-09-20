@@ -113,6 +113,15 @@ elif [ "${PICK_ALL_RANDMON_PORTS}" = "true" ]; then
   fi
 fi
 
+if [ "${SELENIUM_NODE_SD_PORT}" = "0" ]; then
+  export SELENIUM_NODE_SD_PORT=$(get_unused_port)
+elif [ "${PICK_ALL_RANDMON_PORTS}" = "true" ]; then
+  # User want to pick random ports but may also want to fix some others
+  if [ "${SELENIUM_NODE_SD_PORT}" = "${DEFAULT_SELENIUM_NODE_SD_PORT}" ]; then
+    export SELENIUM_NODE_SD_PORT=$(get_unused_port)
+  fi
+fi
+
 # Video
 export VIDEO_LOG_FILE="${LOGS_DIR}/video-rec-stdout.log"
 export VIDEO_PIDFILE="${RUN_DIR}/video.pid"
@@ -371,6 +380,8 @@ echo "${SELENIUM_NODE_CH_PORT}" > SELENIUM_NODE_CH_PORT
 echo "${SELENIUM_NODE_CH_PORT}" > CH_PORT
 echo "${SELENIUM_NODE_FF_PORT}" > SELENIUM_NODE_FF_PORT
 echo "${SELENIUM_NODE_FF_PORT}" > FF_PORT
+echo "${SELENIUM_NODE_SD_PORT}" > SELENIUM_NODE_SD_PORT
+echo "${SELENIUM_NODE_SD_PORT}" > SD_PORT
 echo "${DISPLAY}" > DISPLAY
 echo "${VNC_PORT}" > VNC_PORT
 echo "${NOVNC_PORT}" > NOVNC_PORT
